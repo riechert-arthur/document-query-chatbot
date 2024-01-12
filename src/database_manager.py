@@ -1,5 +1,7 @@
-import credential_exception
-import pymongo
+from credential_exception import CredentialException
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+from pymongo.errors import ConnectionFailure
 
 """
 A class to manage the database connection with MongoDB.
@@ -8,34 +10,21 @@ AUTHOR: Arthur Riechert
 VERSION: 1.0.0
 """
 
-class DatabaseManager():
+class DatabaseManager:
 
-    def __init__(self, **credentials):
+    def __init__(self, uri: str):
 
-        if (credentials == None):
-            raise credential_exception.CredentialException("No login information presented!")
+        if not uri:
+            raise CredentialException("No URI provided!")
 
-        self.credentials: dict = credentials
-        self.client: pymongo.MongoClient = self.start_connection()
+        self.uri = uri
+        self.client = self.start_connection()
 
-    def start_connection(self) -> pymongo.MongoClient:
-        return pymongo.MongoClient(self.credentials)
-    
-    # Will ensure client has working connection.
-    # Will try 3 times after failure.
-    def test_client(self) -> bool:
-        
-        count = 0
+    def start_connection(self):
+        try:
+            client = MongoClient(self.uri, server_api=ServerApi('1'))
 
-        while (count < 3):
-            try:
-                self.client.test_database
-            except pymongo.ConnectionFailure as e:
-                print (f"Connection failed. Retrying... Attempt:{count} Remaining:{3 - 1 - count}")
-
-                if count == 2:
-                    return False
-                
-                count += 1
-
-        return True
+            client.admin.command('ping')
+            return client
+        except ConnectionFailure as e:
+            raise ConnectionError(f"Connection failed: {e}")
