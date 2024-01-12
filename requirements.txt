@@ -8,6 +8,7 @@ certifi==2023.11.17
 charset-normalizer==3.3.2
 click==8.1.7
 distro==1.9.0
+dnspython==2.4.2
 gitdb==4.0.11
 GitPython==3.1.41
 h11==0.14.0
@@ -32,6 +33,7 @@ pydantic==2.5.3
 pydantic_core==2.14.6
 pydeck==0.8.1b0
 Pygments==2.17.2
+pymongo==4.6.1
 python-dateutil==2.8.2
 pytz==2023.3.post1
 referencing==0.32.1
