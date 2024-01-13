@@ -30,8 +30,8 @@ def register_user(user: str, hash: str, db: DatabaseManager) -> bool:
     db.insert({
         "user": user,
         "password": hash,
-        "usage": "0",
-        "limit": "3000",
+        "usage": 0,
+        "limit": 3000,
         "assistant_id": create_assistant(streamlit.secrets["openai"]["api_key"]),
         "threads": [],
         "chat_history": [],

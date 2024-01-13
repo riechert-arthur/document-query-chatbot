@@ -46,6 +46,7 @@ class DatabaseManager:
             if user["user"] == username:
                 return user
             
+            
     def add_thread(self, user: str, item: str) -> dict:
 
         user_id = self.get_user(user)["_id"]
@@ -62,4 +63,18 @@ class DatabaseManager:
         self.db.update_one(
             {"_id": user_id},
             {"$set": {"chat_history": chat_history}}
+        )
+
+    def delete_user(self, user_id: str):
+        self.db.delete_one({"_id": user_id})
+
+    def update_count(self, id: str, extra: int):
+
+        user = self.db.find_one({"_id": id})
+
+        current_count = user["usage"] + extra
+        
+        self.db.update_one(
+            {"_id": id},
+            {"$set": {"usage": current_count}}
         )

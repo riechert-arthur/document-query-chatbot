@@ -11,8 +11,11 @@ def create_assistant(api_key: str):
     return openai.OpenAI(api_key=api_key).beta.assistants.create(
         instructions="You are a friendly assistant.",
         tools=[{"type": "retrieval"}],
-        model="gpt-4",
+        model="gpt-4-1106-preview",
     ).id
+
+def delete_assistant(api_key: str, assistant_id: str):
+    openai.OpenAI(api_key=api_key).beta.assistants.delete(assistant_id)
 
 def create_thread(api_key: str):
     return openai.OpenAI(api_key=api_key).beta.threads.create().id
