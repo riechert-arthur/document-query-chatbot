@@ -15,7 +15,7 @@ and user accounts will be deleted once they reach the word limit (for demo purpo
     source env/bin/activate
     pip install -r requirements.txt
     ```
-5. Open a terminal in the `src` folder, and run `streamlit run Chat.py`.
+5. Open a terminal in the `src` folder, and run `streamlit run main.py`.
 6. The context limit is hard-coded in `Login.py` and can be changed there. In addition, the name of the collection/database is hard-coded in database_manager.py, and should be changed there.
 
 ## Technologies
