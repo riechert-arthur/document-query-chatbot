@@ -8,15 +8,6 @@ from password import hash_password
 from openai_manager import get_threads, create_thread
 from thread_manager import ThreadManager
 
-import time
-
-"""
-The main driver file to run streamlit.
-
-AUTHOR: Arthur Riechert
-VERSION: 1.0.0
-"""
-
 def page() -> None:
     streamlit.title("Chatbot Demo")
 
@@ -136,49 +127,46 @@ def chat(db: DatabaseManager):
         thread_id=thread_id
     )
 
-    with streamlit.container(border=True):
+    if not "chat" in streamlit.session_state:
+        streamlit.session_state["chat"] = user["chat_history"]
+
+    with streamlit.container():
+
+        chat_history = streamlit.session_state["chat"]
 
         with streamlit.chat_message(name="assistant", avatar="🤖"):
 
             streamlit.write(f"Hello! How can I help you today, {streamlit.session_state["username"]}?")
 
-        for message in thread.get_all_messages().data:
+        if chat_history:
 
-            with streamlit.chat_message(name=message.role, avatar="🤖" if message.role == "assistant" else "👨"):
+            for message in chat_history:
 
-                streamlit.markdown(message.content[0].text.value)
+                role = message["role"]
+
+                with streamlit.chat_message(name=role, avatar="🤖" if role == "assistant" else "👨"):
+
+                    streamlit.markdown(message["content"])
 
     if prompt := streamlit.chat_input(placeholder="Your message..."):
+
+        chat_history = streamlit.session_state["chat"]
 
         with streamlit.chat_message(name="user", avatar="👨"):
 
             streamlit.write(prompt)
+            chat_history.append({"role": "user", "content": prompt})
 
         with streamlit.spinner("Thinking..."):
 
             with streamlit.chat_message(name="assistant", avatar="🤖"):
                 
-                streamlit.markdown(thread.get_response(prompt).data[0].content[0].text.value)
+                response = thread.get_response(prompt).data[0].content[0].text.value
 
-"""
-TO BE REPLACED
-"""
-def chat_history(db: DatabaseManager):
+                chat_history.append({"role": "assistant", "content": response})
+                db.update_chat_history(streamlit.session_state["username"], chat_history)
 
-    users = db.retrieve({"user": streamlit.session_state["username"]})
-    thread_ids = []
-    history = []
-    previews = []
-
-    for user in users:
-        if user["user"] == streamlit.session_state["username"]:
-            thread_ids = user[threads]
-
-    threads = get_threads(
-        api_key=streamlit.secrets["openai"]["api_key"],
-        thread_ids=thread_ids
-    )
-
+                streamlit.markdown(response)
 
 if __name__ == "__main__":
 

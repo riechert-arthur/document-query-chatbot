@@ -54,3 +54,12 @@ class DatabaseManager:
             {"_id": user_id},
             {"$push": { "threads": item}}
         )
+
+    def update_chat_history(self, user: str, chat_history: list[dict]):
+
+        user_id = self.get_user(user)["_id"]
+
+        self.db.update_one(
+            {"_id": user_id},
+            {"$set": {"chat_history": chat_history}}
+        )
