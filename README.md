@@ -5,6 +5,12 @@ have their history persisted across sessions using MongoDB.
 Users can create an account, and the app will use database queries to track their conversation history,
 and user accounts will be deleted once they reach the word limit (for demo purposes only).
 
+## Technologies
+- Python
+- Streamlit
+- GPT-4
+- MongoDB
+
 ## How to Use
 1. Make a clone of the repository.
 2. In the `src` folder, make sure to change the `.streamlit_example` folder to `.streamlit`.
@@ -17,9 +23,3 @@ and user accounts will be deleted once they reach the word limit (for demo purpo
     ```
 5. Open a terminal in the `src` folder, and run `streamlit run main.py`.
 6. The context limit is hard-coded in `Login.py` and can be changed there. In addition, the name of the collection/database is hard-coded in database_manager.py, and should be changed there.
-
-## Technologies
-- Python
-- Streamlit
-- GPT-4
-- MongoDB
