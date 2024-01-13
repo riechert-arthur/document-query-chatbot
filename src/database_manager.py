@@ -18,13 +18,39 @@ class DatabaseManager:
             raise CredentialException("No URI provided!")
 
         self.uri = uri
-        self.client = self.start_connection()
+        self.db = self.start_connection()
 
     def start_connection(self):
+
         try:
             client = MongoClient(self.uri, server_api=ServerApi('1'))
 
             client.admin.command('ping')
-            return client
+
+            return client["demo"]["users"]
+        
         except ConnectionFailure as e:
             raise ConnectionError(f"Connection failed: {e}")
+        
+    def insert(self, item: dict) -> str:
+        return self.db.insert_one(item).inserted_id
+    
+    def retrieve(self, query: dict) -> dict:
+        return self.db.find(query)
+    
+    def get_user(self, username: str) -> dict:
+        
+        users = self.retrieve({"user": username})
+
+        for user in users:
+            if user["user"] == username:
+                return user
+            
+    def add_thread(self, user: str, item: str) -> dict:
+
+        user_id = self.get_user(user)["_id"]
+
+        self.db.update_one(
+            {"_id": user_id},
+            {"$push": { "threads": item}}
+        )
